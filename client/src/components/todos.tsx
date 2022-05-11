@@ -10,13 +10,13 @@ const Todos = () => {
   const [count, setCount] = useState(1);
 
   useEffect(() => {
-    Axios.get("http://localhost:6000/todos").then((rec) => {
+    Axios.get("http://localhost:3000/todos").then((rec) => {
       setdata(rec.data);
     });
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:6000/todos").then((rec) => {
+    Axios.get("http://localhost:3000/todos").then((rec) => {
       setdata1(rec.data);
     });
   }, []);

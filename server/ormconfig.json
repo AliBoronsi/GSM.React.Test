@@ -1,0 +1,10 @@
+{
+  "type": "mssql",
+  "host": "172.31.0.149",
+  "username": "sa2",
+  "password": "Corona007GIG",
+  "database": "_Parking_14010121",
+  "entities": ["dist/**/*.entity.js"],
+  "synchronize": false
+  
+}
