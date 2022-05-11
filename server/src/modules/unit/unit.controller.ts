@@ -11,11 +11,17 @@ export class UnitController extends baseCrudController<Unit> {
     constructor(private unitService: UnitService) {
         super(unitService);
     }
-    @Get()
-    async index(): Promise<Unit[]> {
-         return await [{ct_Key: 1, createdBy: 1, createdOn: new Date(), name: 'name',updatedOn: new Date()}];
+    // @Get()
+    // async getAll(): Promise<Unit[]> {
+    //     return this.unitService.getAll();
+    // }
+    @Get('getAllWithRelations')
+    async getAllWithRelations(): Promise<Unit[]> {
+        return this.unitService.getAllWithRelations(['user']);
+        //  return this.unitService.repository.find({
+        //      relations:['user']
+        // });
     }
-
     // @Get(':id')
     // async show(@Param('id') id: string): Promise<Unit> {
     // }

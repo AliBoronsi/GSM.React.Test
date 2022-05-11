@@ -10,8 +10,12 @@ export class BaseCrudService<T> {
   constructor(repository: Repository<T>) {
     this.repository = repository;
   }
-
   public getAll(): Promise<T[]>{
     return this.repository.find();
+  }
+  public getAllWithRelations(relations?: string[]): Promise<T[]>{
+    return this.repository.find({
+      relations: relations
+    });
   }
 }

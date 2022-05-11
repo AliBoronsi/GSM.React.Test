@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { User } from "../user/user.entity";
 
 @Entity({ schema: 'dbo', name: '_CarTypes' })
 export class Unit {
@@ -23,4 +24,8 @@ export class Unit {
     @ApiProperty() 
     @Column({ name: 'CreatedBy' })
     createdBy: number;
+
+    @ManyToOne(() => User, (user) => user.units)
+    @JoinColumn({ name: 'createdBy' })
+    user: User
 }

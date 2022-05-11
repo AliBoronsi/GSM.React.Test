@@ -25,7 +25,7 @@ const CarTypes = () => {
         </thead>
         <tbody>
           {data.map((rec) => (
-            <tr>
+            <tr key={rec.ct_Key}>
               <td scope="row">{rec.name}</td>
               <td>{new Date(rec.createdOn).toDateString()}</td>
               <td>{new Date(rec.updatedOn).toDateString()}</td>
