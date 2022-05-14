@@ -3,10 +3,10 @@ export class ServerResult<T> {
     success: boolean;
     message: string;
 
-    static SuccessResult<T>(data: T): ServerResult<T> {
+    static SuccessResult<T>(data: T,message?: string): ServerResult<T> {
         return {
             success: true,
-            message: null,
+            message: message,
             data: data
         };
     }

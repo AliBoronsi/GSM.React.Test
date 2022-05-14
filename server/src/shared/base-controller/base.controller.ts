@@ -34,8 +34,8 @@ export class baseCrudController<T extends BaseEntity> {
     public async insert(@Body() entity: DeepPartial<T>): Promise<ServerResult<T>> {
         try {
             const res = await this.baseCrudService.insert(entity);
-            return ServerResult.SuccessResult(res);
-        } catch (error) {            
+            return ServerResult.SuccessResult(res, 'Inserted Successfully');
+        } catch (error) {
             return ServerResult.FailResult(error);
         }
     }
@@ -44,7 +44,7 @@ export class baseCrudController<T extends BaseEntity> {
     public async update(@Body() entity: DeepPartial<T>): Promise<ServerResult<T>> {
         try {
             const res = await this.baseCrudService.update(entity);
-            return ServerResult.SuccessResult(res);
+            return ServerResult.SuccessResult(res, 'Updated Successfully');
         } catch (error) {
             return ServerResult.FailResult(error);
         }
@@ -54,7 +54,7 @@ export class baseCrudController<T extends BaseEntity> {
     public async delete(@Param('id') id: number): Promise<ServerResult<boolean>> {
         try {
             const res = await this.baseCrudService.delete(id);
-            return ServerResult.SuccessResult(res);
+            return ServerResult.SuccessResult(res, 'Deleted Successfully');
         } catch (error) {
             return ServerResult.FailResult(error);
         }
