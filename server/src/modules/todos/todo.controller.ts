@@ -8,6 +8,8 @@ import {
   Param,
   HttpCode,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Unit } from '../unit/unit.entity';
 
 interface Todo {
   id: number;
@@ -39,6 +41,7 @@ let todos: Todo[] = [
 }));
 
 @Controller('todos')
+@ApiTags('todos')
 export class TodosController {
   constructor() {}
 
@@ -53,10 +56,12 @@ export class TodosController {
   }
 
   @Post()
-  async create(@Body() { text }: { text: string }): Promise<Todo> {
+  // async create(@Body() { text }: { text: string }): Promise<Todo> {
+  async create(@Body() unit: Unit): Promise<Todo> {
     const todo = {
       id: todos.length + 1,
-      text,
+      // text,
+      text: '',
       active: true,
       done: false,
     };
