@@ -1,20 +1,27 @@
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
 import { Injectable, Logger } from '@nestjs/common';
+import { UnitDto } from 'src/modules/unit/dto/unit.dto';
+import { Unit } from 'src/modules/unit/unit.entity';
+import { User } from 'src/modules/user/user.entity';
 import { Brackets, Connection, DeepPartial, EntityTarget, InsertResult, Repository } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { BaseDto } from '../base-entity/base.dto';
 import { BaseEntity } from '../base-entity/base.entity';
+import { QueryBuilderDelegate } from '../base-entity/types';
 
 @Injectable()
-export class BaseCrudService<T extends BaseEntity> {
+export class BaseCrudService<T extends BaseEntity, TDto extends BaseDto> {
   public repository: Repository<T>;
-  private entityName: string;
+  private entityAlias: string;
 
-  constructor(repository: Repository<T>) {
+  constructor(repository: Repository<T>/*, @InjectMapper() private mapper: Mapper*/) {
     this.repository = repository;
   }
 
   // https://stackoverflow.com/questions/54192483/typeorm-dynamic-query-builder-from-structured-object
-  public getAll(): Promise<T[]> {
+  public getAll(queryBuilder?: QueryBuilderDelegate<T>): Promise<TDto[]> {
     const request = {
       columns: ['ct_Key', 'name'],
       // sortColumns: [],
@@ -25,29 +32,31 @@ export class BaseCrudService<T extends BaseEntity> {
     };
 
 
-    this.entityName = this.repository.metadata.name;
-    request.columns = request.columns.map(col => col = this.entityName + '.' + col);
-    const query = this.repository.createQueryBuilder(this.entityName);
-    query.select(request.columns);
-    
-    query.where(this.entityName + ".name = :name1", { name1: "1" });
+    this.entityAlias = 'X';//this.repository.metadata.name;
+    const columns = request.columns && request.columns.length ?
+      request.columns.map(col => col = this.entityAlias + '.' + col).join(',') :
+      this.repository.metadata.ownColumns.map(e => this.entityAlias + '.' + e.propertyName).join(',')
+    const query = this.repository.createQueryBuilder(this.entityAlias);
+    query.select(columns);
 
-    // request.fastFilterColumns.forEach(column => {
-    //   query.orWhere(`${this.entityName}.${column} LIKE :${column}`, { [column]: '%' + request.fastFilterKeyword + '%' });
-    // });
+    queryBuilder.apply(this, [query]);
+
+    // query.where(this.entityName + ".name = :name1", { name1: "1" });
+
     query.andWhere(new Brackets(qb => {
-      request.fastFilterColumns.map(column => 
-        qb.orWhere(`${this.entityName}.${column} LIKE :${column}`, { [column]: '%' + request.fastFilterKeyword + '%' 
-      }));
+      request.fastFilterColumns.map(column =>
+        qb.orWhere(`${this.entityAlias}.${column} LIKE :${column}`, {
+          [column]: '%' + request.fastFilterKeyword + '%'
+        }));
     }));
 
     // query.orderBy(request.columns[0],'DESC').addOrderBy(request.columns[1],'ASC');
-    
+
     // query.skip(request.startRow - 1);
     // query.take(request.endRow - request.startRow + 1);
 
     Logger.log('', '\n' + query.getQueryAndParameters());
-    return query.getMany();
+    return query.getRawMany<TDto>();
   }
 
   public getAllWithRelations(relations?: string[]): Promise<T[]> {
@@ -56,8 +65,17 @@ export class BaseCrudService<T extends BaseEntity> {
     });
   }
 
-  public getById(id: number): Promise<T> {
-    return this.repository.findOneOrFail(id);
+  public async getById(id: number, queryBuilder?: QueryBuilderDelegate<T>): Promise<TDto> {
+    const query = this.repository.createQueryBuilder('x');
+
+    const entityColumns = this.repository.metadata.ownColumns.map(e => 'x.' + e.propertyName).join(',');
+    query.select(entityColumns);
+
+    queryBuilder.apply(this, [query]);
+    query.andWhere("x.ct_Key = :ct_Key", { ct_Key: id });
+
+    Logger.log('', '\n' + query.getQueryAndParameters());
+    return await query.getRawOne<TDto>()//.getOne();
   }
 
   public async insert(entity: DeepPartial<T>): Promise<T> {

@@ -1,3 +1,5 @@
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
 import {
   Controller,
   Get,
@@ -10,13 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Unit } from '../unit/unit.entity';
-
-interface Todo {
-  id: number;
-  text: string;
-  active: boolean;
-  done: boolean;
-}
+import { Todo, TodoDto } from './Todo';
 
 let todos: Todo[] = [
   'NestJS',
@@ -43,7 +39,7 @@ let todos: Todo[] = [
 @Controller('todos')
 @ApiTags('todos')
 export class TodosController {
-  constructor() {}
+  constructor(@InjectMapper() private readonly mapper: Mapper) { }
 
   @Get()
   async index(): Promise<Todo[]> {
@@ -51,8 +47,10 @@ export class TodosController {
   }
 
   @Get(':id')
-  async show(@Param('id') id: string): Promise<Todo> {
-    return todos.find((todo) => todo.id === parseInt(id));
+  async show(@Param('id') id: string): Promise<TodoDto> {
+    const todo = todos.find((todo) => todo.id === parseInt(id));
+    const dto = this.mapper.map(todo, Todo, TodoDto);
+    return dto;
   }
 
   @Post()

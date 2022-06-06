@@ -17,6 +17,6 @@ export class User {
     @Column({ name: 'u_LastName' })
     u_LastName: string;
 
-    @OneToMany(() => Unit, (unit) => unit.user)
-    units: Unit[]
+    // @OneToMany(() => Unit, (unit) => unit.user)
+    // units: Unit[]
 }

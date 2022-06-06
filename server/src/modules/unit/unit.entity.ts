@@ -9,7 +9,7 @@ export class Unit extends BaseEntity{
     @Column()
     name: string;
 
-    @ManyToOne(() => User, (user) => user.units)
-    @JoinColumn({ name: 'createdBy' })
-    user: User
+    // @ManyToOne(() => User, (user) => user.units)
+    // @JoinColumn({ name: 'createdBy' })
+    // user: User
 }

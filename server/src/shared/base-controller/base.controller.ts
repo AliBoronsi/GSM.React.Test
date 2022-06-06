@@ -4,14 +4,15 @@ import { BaseEntity } from '../base-entity/base.entity';
 import { DeepPartial, InsertResult } from 'typeorm';
 import { BaseCrudService } from '../base-service/base.service';
 import { ServerResult } from '../base-entity/server-result';
+import { BaseDto } from '../base-entity/base.dto';
 
 @Controller('base-controller')
-export class baseCrudController<T extends BaseEntity> {
-    constructor(private baseCrudService: BaseCrudService<T>) {
+export class baseCrudController<T extends BaseEntity, TDto extends BaseDto> {
+    constructor(private baseCrudService: BaseCrudService<T,TDto>) {
     }
 
     @Get("getAll")
-    public async getAll(): Promise<ServerResult<T[]>> {
+    public async getAll(): Promise<ServerResult<TDto[]>> {
         try {
             const res = await this.baseCrudService.getAll();
             return ServerResult.SuccessResult(res);
@@ -21,7 +22,7 @@ export class baseCrudController<T extends BaseEntity> {
     }
 
     @Get("getById/:id")
-    public async getById(@Param('id') id: number): Promise<ServerResult<T>> {
+    public async getById(@Param('id') id: number): Promise<ServerResult<TDto>> {
         try {
             const res = await this.baseCrudService.getById(id);
             return ServerResult.SuccessResult(res);
