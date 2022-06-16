@@ -38,6 +38,7 @@ export class baseCrudController<T extends BaseEntity, TDto extends BaseDto> {
     }
 
     @Post("insert")
+    // https://github.com/nestjs/swagger/issues/86
     public async insert(@Body() entity: TDto): Promise<ServerResult<T>> {
         try {
             const res = await this.baseCrudService.insert(entity);
