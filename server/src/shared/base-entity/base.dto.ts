@@ -12,4 +12,6 @@ export class BaseDto {
 
     @ApiProperty()
     createdBy: number;
+
+    totalRecord: number;
 }

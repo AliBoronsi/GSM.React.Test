@@ -1,23 +1,29 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Type } from '@nestjs/common';
-import { ApiBody, ApiExcludeController, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiBody, ApiExcludeController, ApiExcludeEndpoint, ApiOkResponse } from '@nestjs/swagger';
 import { BaseEntity } from '../base-entity/base.entity';
 import { DeepPartial, InsertResult } from 'typeorm';
 import { BaseCrudService } from '../base-service/base.service';
 import { ServerResult } from '../base-entity/server-result';
 import { BaseDto } from '../base-entity/base.dto';
+import { AgGridRequestModel, AgGridResponseModel } from '../models/AgGridViewModel';
 
 @Controller('base-controller')
 export class baseCrudController<T extends BaseEntity, TDto extends BaseDto> {
-    constructor(private baseCrudService: BaseCrudService<T,TDto>) {
+    constructor(private baseCrudService: BaseCrudService<T, TDto>) {
     }
 
-    @Get("getAll")
-    public async getAll(): Promise<ServerResult<TDto[]>> {
+    @ApiOkResponse({
+        type: AgGridResponseModel,
+    })
+    @Post('getAll')
+    public async getAll(
+        @Body() input: AgGridRequestModel,
+    ): Promise<AgGridResponseModel<TDto>> {
         try {
-            const res = await this.baseCrudService.getAll();
-            return ServerResult.SuccessResult(res);
+            const res = await this.baseCrudService.getAll(input);
+            return AgGridResponseModel.SuccessResult(res);
         } catch (error) {
-            return ServerResult.FailResult(error);
+            return AgGridResponseModel.FailResult(error.message);
         }
     }
 
@@ -32,11 +38,11 @@ export class baseCrudController<T extends BaseEntity, TDto extends BaseDto> {
     }
 
     @Post("insert")
-    public async insert(@Body() entity: DeepPartial<T>): Promise<ServerResult<T>> {
+    public async insert(@Body() entity: TDto): Promise<ServerResult<T>> {
         try {
             const res = await this.baseCrudService.insert(entity);
             return ServerResult.SuccessResult(res);
-        } catch (error) {            
+        } catch (error) {
             return ServerResult.FailResult(error);
         }
     }
