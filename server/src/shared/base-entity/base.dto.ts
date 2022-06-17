@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
 
 export class BaseDto {
     @ApiProperty()
@@ -13,5 +14,6 @@ export class BaseDto {
     @ApiProperty()
     createdBy: number;
 
+    @Exclude()
     totalRecord: number;
 }

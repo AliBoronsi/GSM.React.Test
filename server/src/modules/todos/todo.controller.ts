@@ -11,6 +11,7 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { UnitDto } from '../unit/dto/unit.dto';
 import { Unit } from '../unit/unit.entity';
 import { Todo, TodoDto } from './Todo';
 
@@ -55,7 +56,7 @@ export class TodosController {
 
   @Post()
   // async create(@Body() { text }: { text: string }): Promise<Todo> {
-  async create(@Body() unit: Unit): Promise<Todo> {
+  async create(@Body() unit: UnitDto): Promise<Todo> {
     const todo = {
       id: todos.length + 1,
       // text,

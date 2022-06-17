@@ -40,26 +40,26 @@ export class UnitService extends BaseCrudService<Unit, UnitDto> {
 
   override async getById<T>(id: number, a: T): Promise<UnitDto> {
 
-    const nestedQuery = this.repository.createQueryBuilder('n');
-    nestedQuery.select('n.ct_Key', 'n');
-    nestedQuery.where('n.ct_Key >= 30');
-    // nestedQuery.where('n.ct_Key >= :ct_Key');
-    nestedQuery.setParameter("ct_Key", 30);
+    // const nestedQuery = this.repository.createQueryBuilder('n');
+    // nestedQuery.select('n.ct_Key', 'n');
+    // nestedQuery.where('n.ct_Key >= 30');
+    // // nestedQuery.where('n.ct_Key >= :ct_Key');
+    // nestedQuery.setParameter("ct_Key", 30);
 
-    Logger.log(nestedQuery.getQuery());
+    // Logger.log(nestedQuery.getQuery());
 
-    const query = getManager().createQueryBuilder();
-    query.select('list.ct_Key')
-      .from("(" + nestedQuery.getQuery() + ")", 'list');
+    // const query = getManager().createQueryBuilder();
+    // query.select('list.ct_Key')
+    //   .from("(" + nestedQuery.getQuery() + ")", 'list');
 
-    Logger.log(query.getQuery());
+    // Logger.log(query.getQuery());
 
-    const data = await query.getRawMany<Unit>();
+    // const data = await query.getRawMany<Unit>();
     
-    this.repository.save(a);
+    // this.repository.save(a);
     
-    return new UnitDto();
+    // return new UnitDto();
 
-    // return super.getById(id,this.queryBuilderDelegate);
+    return super.getById(id,this.queryBuilderDelegate);
   }
 }
